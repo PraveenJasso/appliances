@@ -7,5 +7,5 @@ public interface ApplianceServices {
 	
 	List<Map<String, Object>> findAllActiveAppliances() throws Exception;
 	
-	void updateMachinery(boolean active);
+	void updateMachinery();
 }

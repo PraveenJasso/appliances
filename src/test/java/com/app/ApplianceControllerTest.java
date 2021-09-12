@@ -43,6 +43,13 @@ public class ApplianceControllerTest {
 	                .contentType(MediaType.APPLICATION_JSON).content(convertBeanToJson(getApplianceDetails()))).andDo(print());
 	        assertEquals(STATUS_OK, actions.andReturn().getResponse().getStatus(), "Test success Get appliances");
 	    }
+	    @Test
+	    public void testFindAllActiveAppliancesWithInMinute() throws Exception {
+	        this.applianceServices.findAllActiveAppliances();
+	        ResultActions actions = this.mockMvc.perform(get(URL)
+	                .contentType(MediaType.APPLICATION_JSON).content(convertBeanToJson(getApplianceDetailsWithInMinute()))).andDo(print());
+	        assertEquals(STATUS_OK, actions.andReturn().getResponse().getStatus(), "Test success Get appliances with minute message");
+	    }
 	    
 	    private String convertBeanToJson(Object obj) throws JsonProcessingException {
 	        return new ObjectMapper().writeValueAsString(obj);
@@ -63,6 +70,20 @@ public class ApplianceControllerTest {
 			appliance.put("customerAddress", "Budgetvägen 1, 333 33 Uppsala");
 			appliance.put("applianceId", "YS2R4X20009048066");
 			appliance.put("factoryNR", "PQR678");
+			appliances.add(appliance);
+			return appliances;
+		}
+		
+		 /**
+		 * Gets the user details with there are no active machineries.
+		 *
+		 * @return the user details
+		 */
+		private static List<Map<String, Object>> getApplianceDetailsWithInMinute() {
+			
+			List<Map<String, Object>> appliances = new ArrayList<Map<String, Object>>();
+			Map<String, Object> appliance = new HashMap<>();
+			appliance.put("message", "Please try after 1 mintue");
 			appliances.add(appliance);
 			return appliances;
 		}

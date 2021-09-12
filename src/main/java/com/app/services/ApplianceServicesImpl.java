@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.app.exception.ResourceNotFoundException;
 import com.app.model.Machinery;
 import com.app.repository.CustomerAppliancesRepostory;
 import com.app.repository.MachineryRepository;
@@ -29,17 +29,20 @@ public class ApplianceServicesImpl implements ApplianceServices {
 	@Transactional(propagation = Propagation.REQUIRED)
 	@Override
 	public List<Map<String, Object>> findAllActiveAppliances() throws Exception {
-		List<Machinery> machineries = this.machineryRepository.findAllByActive(true);
+		List<Machinery> machineries = this.machineryRepository.findAllByUpdatedOn();
 		if(machineries == null || machineries.isEmpty()) {
-			updateMachinery(true);
-			throw new ResourceNotFoundException("No Appliances found");
+			List<Map<String, Object>> notPingRespond = new ArrayList<>();
+			Map<String, Object> ping = new HashMap<>();
+			ping.put("message", "Please try after 1 mintue");
+			notPingRespond.add(ping);
+			//throw new ResourceNotFoundException("Please try after 1 mintue");
+			return notPingRespond;
 		}
+		updateMachinery();
 		List<String> applianceIds = new ArrayList<>();
 		for (Machinery machinery : machineries) {
 			applianceIds.add(machinery.getApplianceId());
 		}
-		machineryRepository.updateMachineryAsInactive(getIncrementalTime());
-		machineryRepository.updateMachineryAsInactive(getIncrementalTime());
 		List<Map<String, Object>> appliances = customerAppliancesRepostory.findAllActiveAppliances(applianceIds);
 		return appliances;
 	}
@@ -54,8 +57,8 @@ public class ApplianceServicesImpl implements ApplianceServices {
 	
 	@Transactional(propagation = Propagation.REQUIRED)
 	@Override
-	public void updateMachinery(boolean active) {
-		machineryRepository.updateMachinery(getIncrementalTime(),true);
+	public void updateMachinery() {
+		machineryRepository.updateMachinery(getIncrementalTime());
 		
 	}
 	
