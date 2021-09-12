@@ -8,7 +8,7 @@ PostgresSql
 
 **2. Configure PostgreSQL**
 
-First, create a database named `appliance` with credentials appliance/appliance. Then, run `appliance_schema.sql` and 'appliance_data.sql'.
+First, created a database named `appliance` with credentials appliance/appliance. Then, run `appliance_schema.sql` and 'appliance_data.sql'.
 
 **3. Run the app**
 
